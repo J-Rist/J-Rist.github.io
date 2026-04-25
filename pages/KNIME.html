@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KNIME</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap');
+
+        :root {
+            --primary: #EAB308;
+            --primary-hover: #c49406;
+            --bg-color: #F8FAFC;
+            --surface-color: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
+            --border-color: #E2E8F0;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius-md: 0.75rem;
+            --radius-lg: 1.25rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            background-image: radial-gradient(circle at 15% 50%, rgba(79, 70, 229, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(236, 72, 153, 0.08), transparent 25%);
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--text-main);
+        }
+
+        code {
+            color: var(--primary);
+        }
+
+        /* Encabezado */
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            width: 100%;
+            max-width: 1000px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        header h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #EAB308, #14B8A6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+        }
+
+        header p {
+            font-size: 1.125rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Contenedor principal */
+        main {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Navegación por pestañas */
+        .contenedor-botones {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            background: var(--surface-color);
+            padding: 0.5rem;
+            border-radius: 100px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            animation: fadeInUp 0.8s ease-out;
+            margin-bottom: 1rem;
+        }
+
+        .btn-tab {
+            padding: 0.75rem 1.5rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            background-color: transparent;
+            border: none;
+            border-radius: 100px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--primary), #e6ca76);
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.3s ease;
+            border-radius: 100px;
+        }
+
+        .btn-tab:hover {
+            color: var(--text-main);
+            background-color: rgba(79, 70, 229, 0.05);
+        }
+
+        .btn-tab.active-tab {
+            color: white;
+            box-shadow: var(--shadow-md);
+            background-color: transparent;
+        }
+
+        .btn-tab.active-tab::before {
+            opacity: 1;
+        }
+
+        /* Secciones de contenido */
+        .secciones-container {
+            position: relative;
+            width: 100%;
+            background: var(--surface-color);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            min-height: 400px;
+            overflow: hidden;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .seccion {
+            display: none;
+            padding: 3.5rem;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .seccion.activa {
+            display: block;
+        }
+
+        .seccion h2 {
+            font-size: 2.25rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-main);
+            position: relative;
+            display: inline-block;
+        }
+
+        .seccion h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -8px;
+            width: 100%;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .seccion h3 {
+            font-size: 1.5rem;
+        }
+
+        .seccion p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            margin-top: 1rem;
+        }
+
+        /* Imágenes dentro de las secciones */
+        .img-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 2.5rem;
+            margin-bottom: 2rem;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            background: var(--bg-color);
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .seccion img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .seccion img:hover {
+            transform: scale(1.03);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Navegación Inferior */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn-nav {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.75rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--primary);
+            background-color: rgba(195, 229, 70, 0.05);
+            border: 1px solid rgba(195, 229, 70, 0.3);
+            border-radius: 100px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-nav:hover {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .btn-nav.next {
+            margin-left: auto;
+        }
+
+        /* Animaciones */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.5rem;
+            }
+
+            .contenedor-botones {
+                border-radius: 1rem;
+                padding: 0.75rem;
+            }
+
+            .btn-tab {
+                flex: 1 1 calc(50% - 1rem);
+                text-align: center;
+                border-radius: 0.5rem;
+            }
+
+            .btn-tab::before {
+                border-radius: 0.5rem;
+            }
+
+            .seccion {
+                padding: 2rem 1.5rem;
+            }
+
+            .seccion h2 {
+                font-size: 1.75rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .btn-tab {
+                flex: 1 1 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>KNIME</h1>
+        <p>By Johan Sebastian Rivera Rojas</p>
+    </header>
+
+    <main>
+        <div class="contenedor-botones">
+            <button class="btn-tab active-tab" onclick="cambiarSeccion('instalacion', this)">Instalación</button>
+            <button class="btn-tab" onclick="cambiarSeccion('workflow', this)">Workflow</button>
+            <button class="btn-tab" onclick="cambiarSeccion('nodos', this)">Nodos</button>
+        </div>
+
+        <div class="secciones-container">
+            <div id="instalacion" class="seccion activa">
+                <h2>Instalación</h2>
+                <h3>¿Qué es KNIME?</h3>
+                <p>
+                    KNIME (Konstanz Information Miner) es una plataforma de análisis de datos de código abierto que 
+                    permite crear flujos de trabajo visuales arrastrando y conectando nodos, sin necesidad de programar 
+                    (aunque también lo permite). Se utiliza para tareas como limpieza de datos, integración, análisis, 
+                    machine learning y visualización, facilitando el trabajo con grandes volúmenes de información de 
+                    forma intuitiva y modular.
+                </p>
+                <h3>1. Descargar el instalador</h3>
+                <p>
+                    Primero, buscamos en el navegador "knime analytics platform" y hacemos clic en el primer resultado. 
+                    Al hacerlo, se nos abrirá la página web oficial de KNIME.
+                </p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1VXPXYr3o13MoprE1TV1TIrEvU3CcI_QS"
+                        alt="Página principal de KNIME" />
+                </div>
+                <p>
+                    Una vez estemos en esta página, damos clic en el botón que dice "Download KNIME for free", 
+                    lo que nos llevará a la siguiente página.
+                </p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1vl28Bygw-TdPHBYqFx9FhGZPuxmKlrba"
+                        alt="Digitar un correo" />
+                </div>
+                <p>
+                    Para que nos permita descargar el instalador, primero se requiere digitar un correo electrónico; 
+                    una vez se digite, aceptamos los términos y condiciones y damos clic en "Download".
+                </p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1PNL6rAnNXOPlMCox-UFStbAM0_gTa7DO"
+                        alt="Descargar el instalador para el sistema opetativo en cuestión" />
+                </div>
+                <p>
+                    Por último, podremos descargar el instalador para el sistema operativo de nuestra preferencia. 
+                    En este caso, vamos a usar Windows, así que descargamos el que dice "KNIME Analytics Platform for Windows (Installer)".
+                </p>
+
+                <h3>2. Proceso de instalación</h3>
+
+                <p>1. Elegimos el modo de instalación; en este caso, seleccionamos la opción recomendada "Install for me only".</p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1gC7TFtyfFiVxWu6ZMD2jhgsuppKaST1Z"
+                        alt="Modo de instalación" />
+                </div>
+                <p>2. Leemos el acuerdo de licencia, aceptamos los términos y condiciones y hacemos clic en "Next".</p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1mr62yBdB-4u8HEDfeZ1eL0HiuJhNGBXJ"
+                        alt="Acuerdo de licencia" />
+                </div>
+                <p>3. Definimos en qué carpeta se va a instalar; dejamos la que se crea por defecto y hacemos clic en "Next".</p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1SpXkr_5fIlPUhrgxcD1rLyDJxQK_N_nA"
+                        alt="Lugar de destino de la instalación" />
+                </div>
+                <p>4. Definimos el nombre acortado de la aplicación; dejamos el que se crea por defecto y hacemos clic en "Next".</p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1G0690Dtcdc2W_ilqeXHSvQf9LoAcS4Zq"
+                        alt="Nombre de la carpeta de la instalación" />
+                </div>
+                <p>
+                    5. Seleccionamos las configuraciones adicionales que queramos; por defecto aparecen todas seleccionadas, 
+                    vamos a dejarlo así y hacemos clic en "Next".
+                </p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/12J6eEZHicsws0qC30ZHFV_sCRwtxIjuJ"
+                        alt="Configuraciones adicionales" />
+                </div>
+                <p>6. Especificamos la cantidad de memoria RAM que se reservará para la aplicación y hacemos clic en "Next".</p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1ufVAhLqcjYapvInEB-aZNMIRVx4fE_7u"
+                        alt="Especificar cuánta memoria RAM darle al programa" />
+                </div>
+                <p>7. Por último, revisamos que todas las configuraciones hayan quedado bien y hacemos clic en "Install".</p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/12g9i6b5r9eQj0p1FpkK-cu6LcfT4NfG4"
+                        alt="Todas las especificaciones para instalar" />
+                </div>
+                <p>8. Una vez haya finalizado el proceso de instalación, nos permitirá abrir la aplicación cuando hagamos clic en "Finish".</p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1i-5rOs25rofRdDmioMFuP00PTcPupD3g"
+                        alt="Finalizar y abrir el programa" />
+                </div>
+                <p>
+                    9. La primera vez que se abra la aplicación, nos indicará en qué carpeta se destinarán los workflows 
+                    y otros archivos; dejamos la que se crea por defecto y seleccionamos "Use this as the default and do not ask again" 
+                    para evitar que aparezca esa ventana nuevamente, y hacemos clic en "Launch".
+                </p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1IUomQBNTxYaAAIETrJRHmjLgTV509Arb"
+                        alt="Especificar directorio de flujo de trabajo" />
+                </div>
+
+                <div class="bottom-nav">
+                    <a href="#workflow" class="btn-nav next" onclick="cambiarSeccion('workflow', null)">Siguiente: Workflow
+                        &rarr;</a>
+                </div>
+            </div>
+
+            <div id="workflow" class="seccion">
+                <h2>ETL Básico</h2>
+                <h3>CSV Reader</h3>
+                <p>
+                    Con este nodo se nos permite leer datos desde un archivo de tipo CSV. Este archivo contiene información sobre 
+                    la relación entre los datos de clientes, productos y proveedores, y tiene las siguientes columnas: 
+                    ID_Cliente, Nombre, Edad, Genero, Producto, Categoria, Cantidad, Precio, Sede, Proveedor, 
+                    Fecha_Compra, Comentario, Codigo_Interno.
+                </p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1OX7rKMqU2EVWLDAgkPgVVY-HnWi_2rRJ"
+                        alt="CSV Reader" />
+                </div>
+                <h3>Column Filter</h3>
+                <p>
+                    Este nodo se conecta a la salida del CSV Reader y nos permite excluir las columnas 
+                    que no necesitemos dentro de nuestro análisis; para este caso, excluimos las columnas de 
+                    nombre, comentario y codigo_interno.
+                </p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1pij7uERx3tOIFeSK1zxZkoChRpuTeQ8f"
+                        alt="Column Filter" />
+                </div>
+                <h3>Missing Value</h3>
+                <p>
+                    Este nodo se conecta a la salida del Column Filter y nos ayuda a rellenar los campos 
+                    vacíos dentro del CSV; los campos catalogados como numéricos se llenan con el valor medio de los 
+                    datos de su columna, y los de tipo String (texto) se llenan con el valor más frecuente de su columna.
+                </p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1yq9bHOR5bngmoDeJPxKn_pyYD_KRuvwf"
+                        alt="Missing Value" />
+                </div>
+                <h3>Rule Engine</h3>
+                <p>
+                    Este nodo se conecta a la salida del Missing Value y nos permite generar una nueva columna 
+                    a partir de una condición; en este caso, la condición se basa en la edad y valida si el cliente 
+                    es menor, adulto o adulto mayor, según un rango de edades.
+                </p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1QgkMYbhszw8_Cf0S5h4Pfiq3ut6OtE-I"
+                        alt="Rule Engine" />
+                </div>
+                <h3>Statistics</h3>
+                <p>
+                    Este nodo se conecta a la salida del Rule Engine y nos muestra una tabla con estadísticas obtenidas 
+                    de todas nuestras columnas y registros, como: el valor mínimo, valor máximo, valor medio, etc.
+                </p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1eTVwu1pkf7bnyRELnku-QqnAhxZq3Pow"
+                        alt="Statistics" />
+                </div>
+                <h3>Histogram</h3>
+                <p>
+                    Este nodo se conecta a la salida de ocurrencia del Statistics y nos permite elegir una variable 
+                    para que la grafique en un histograma; en este caso, se eligió la variable de precio y nos indica cuántos productos 
+                    hay en relación con un precio en específico.
+                </p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/18v13U9YXPc17j3P2eCbAFxqKhrqjDu8n"
+                        alt="Histogram" />
+                </div>
+                <h3>Scatter Plot</h3>
+                <p>
+                    Este nodo se conecta a la salida de ocurrencia del Statistics y nos permite comparar entre dos variables 
+                    dentro de un diagrama de dispersión; en este caso, elegimos Precio y Edad, lo que nos indica la edad de los 
+                    clientes que compran un producto más caro o más barato.
+                </p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1OzsN77TuT77pAPFnfNra-8laquwqYqpi"
+                        alt="Scatter Plot" />
+                </div>
+                <div class="bottom-nav">
+                    <a href="#instalacion" class="btn-nav" onclick="cambiarSeccion('instalacion', null)">&larr;
+                        Anterior: Instalación</a>
+                    <a href="#nodos" class="btn-nav next" onclick="cambiarSeccion('nodos', null)">Siguiente:
+                        Nodos &rarr;</a>
+                </div>
+            </div>
+
+            <div id="nodos" class="seccion">
+                <h2>Nodos</h2>
+                <h3>1. File Reader</h3>
+                <p>
+                    Este nodo permite leer archivos de texto como <code>.txt</code> o datos delimitados que no necesariamente son CSV. 
+                    Sirve para importar información desde distintas fuentes y configurar cómo se separan los datos 
+                    (por comas, tabulaciones, etc.), siendo útil cuando se trabaja con formatos menos estructurados.
+                </p>
+                <p>
+                    Se elige el archivo de texto y se define el delimitador de columna correspondiente al utilizado en 
+                    el archivo, para separar cada columna.
+                </p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1NlJLWvD6buNVZvsvpwCjmnE5vFFilbER"
+                        alt="Configuración File Reader" />
+                </div>
+                <h3>2. Joiner</h3>
+                <p>
+                    El Joiner une dos tablas usando una columna en común, similar a los <code>JOIN</code> en SQL. Sirve para combinar información de 
+                    diferentes fuentes (por ejemplo, clientes y compras) y se configura seleccionando las columnas clave y el tipo de unión
+                    (inner, left, right, full).
+                </p>
+                <p>
+                    Para este nodo se necesitan dos archivos de datos que guarden relación entre sí, y se define qué variable de cada tabla se utilizará 
+                    para mostrar los registros que tengan coincidencia.
+                </p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1YgnohyFESzkwmInGj1Xz8bdmcVhjx3dh"
+                        alt="Criteria" />
+                </div>
+                <p>
+                    Se puede elegir si los datos deben estar en ambas tablas, si se le da preferencia a la tabla de la derecha o a la de la izquierda, 
+                    o si se desean incluir todos los datos de ambas tablas.
+                </p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1HiH9LElK3KZ2IVdMWIOLWOI5HmgAHN3O"
+                        alt="Indlude" />
+                </div>
+                <h3>3. Math Formula</h3>
+                <p>
+                    Este nodo permite crear nuevas columnas a partir de operaciones matemáticas entre otras columnas. Sirve para calcular valores 
+                    como totales, promedios o indicadores, y se configura escribiendo una fórmula usando los nombres de las columnas.
+                </p>
+                <p>
+                    Se multiplica la cantidad por el precio y se agrega una columna llamada total con el resultado de la operación.
+                </p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1G5IGlwAGbWWUYP4ETtRP5CfYv-QlaLYz"
+                        alt="Math Formula" />
+                </div>
+                <h3>4. Row Filter</h3>
+                <p>
+                    El Row Filter filtra filas según condiciones específicas, como rangos o comparaciones. Sirve para trabajar solo con los datos 
+                    relevantes (por ejemplo, clientes mayores de cierta edad) y se configura definiendo la columna y la condición.
+                </p>
+                <p>Filtra los registros en los que la edad sea mayor a 18.</p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1QeTCfKX9e5HXSpRetgnApcsqzrozlpa-"
+                        alt="Row Filter" />
+                </div>
+                <h3>5. Sorter</h3>
+                <p>
+                    El Sorter organiza los datos en orden ascendente o descendente según una o más columnas. Sirve para analizar datos de forma 
+                    más clara o priorizar información, como ordenar por precio o cantidad.
+                </p>
+                <p>Ordena los registros por precio, de mayor a menor.</p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1dppCoe008TTFT0bJYfmLOljn-ggb5l5f"
+                        alt="Sorter" />
+                </div>
+                <h3>6. GroupBy</h3>
+                <p>
+                    Este nodo agrupa datos por una o varias columnas y aplica funciones como suma, promedio o conteo. Sirve para generar resúmenes,
+                     similar a tablas dinámicas, y se configura eligiendo columnas de agrupación y agregaciones.
+                </p>
+                <p>Agrupa la columna de precio junto con la cantidad del producto.</p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1ca4PsblduyctQ-ExWAlwcttAib_5KtwK"
+                        alt="Group By" />
+                </div>
+                <h3>7. Row Splitter</h3>
+                <p>
+                    El Row Splitter divide los datos en dos conjuntos según una condición lógica. Sirve para separar información (por ejemplo, 
+                    mayores y menores de edad) y genera dos salidas: una que cumple la condición y otra que no.
+                </p>
+                <p>
+                    Muestra una tabla con los registros que coinciden con el filtro de que la categoría sea igual a "Oficina" 
+                    y, en otra tabla, los registros que no coinciden.
+                </p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1ty0g2Yts7lvCC3YjragXWjz8C3cRyJTA"
+                        alt="Row Splitter" />
+                </div>
+                <h3>8. String Manipulation</h3>
+                <p>
+                    Este nodo permite modificar textos mediante funciones (mayúsculas, concatenación, reemplazos, etc.). Sirve para limpiar y 
+                    transformar datos de tipo string y se configura escribiendo expresiones con funciones predefinidas.
+                </p>
+                <p>
+                    Reemplaza la columna sede con los nombres de las sedes en mayúscula.
+                </p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1rosPchQ7-itYFKHuIVBo2geIVFBjeQGN"
+                        alt="String Manipulation" />
+                </div>
+                <h3>9. Number to String</h3>
+                <p>
+                    Convierte valores numéricos en texto. Sirve cuando se necesita tratar números como categorías o etiquetas, y se configura 
+                    seleccionando las columnas a convertir.
+                </p>
+                <p>Convierte a texto las columnas id_cliente y edad, excluyendo cantidad y precio, ya que estas sí necesitan realizar operaciones.</p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1tNbVgpmTwqM8SpqWs0Y6Y8LtAqqzUXos"
+                        alt="Number to String" />
+                </div>
+                <h3>10. String to Number</h3>
+                <p>
+                    Convierte texto a valores numéricos. Sirve cuando los datos fueron leídos incorrectamente como texto y se necesita hacer 
+                    cálculos con ellos, configurando el tipo de número destino.
+                </p>
+                <p>
+                    En este caso, el sistema identifica correctamente los campos que necesitan ser numéricos, por lo que 
+                    no es necesario usarlo; sin embargo, es muy útil cuando el programa no interpreta correctamente los tipos.
+                </p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1Zi5w7b-ctPo8H2XvoNK78-DCIoVBUSCA"
+                        alt="String to Number" />
+                </div>
+                <h3>11. Bar Chart</h3>
+                <p>
+                    Este nodo crea gráficos de barras para visualizar datos categóricos. Sirve para comparar cantidades entre categorías 
+                    (como productos o sedes) y se configura seleccionando columnas de categoría y valor.
+                </p>
+                <p>
+                    Primero seleccionamos la dimensión de la categoría y podemos incluir columnas con valores numéricos para 
+                    realizar el respectivo análisis; en este caso, es la relación que tienen los nombres con los precios que cada 
+                    cliente está dispuesto a pagar por un producto.
+                </p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/14cMmRXqhLTtoQPeIy1rnPc1jwEtZxaL2"
+                        alt="Bar Chart" />
+                </div>
+                <h3>12. Line Plot</h3>
+                <p>
+                    Genera gráficos de líneas para mostrar tendencias a lo largo del tiempo o secuencias. Sirve para analizar evolución 
+                    (por ejemplo, ventas por fecha) y se configura con ejes X e Y.
+                </p>
+                <p>
+                    Funciona de manera similar al nodo de Bar Chart y, en este caso, se utiliza para ver las tendencias en el tiempo de las
+                    ventas realizadas cada día.
+                </p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1lkHsWodFuVQ9jHaJ3UQWJFixRtfDeMAS"
+                        alt="Line Plot" />
+                </div>
+                <h3>13. Pivot</h3>
+                <p>
+                    El Pivot transforma filas en columnas, similar a una tabla dinámica. Sirve para reorganizar datos y facilitar análisis 
+                    comparativos, configurando columnas de agrupación, pivote y agregación.
+                </p>
+                <p>Primero incluimos las columnas que queramos que sean agrupadas; en este caso, se escogió sede.</p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1tyIRSBZq1bGUCsYTKlbrplqPXJLDktJ4"
+                        alt="Group Pivot" />
+                </div>
+                <p>En Pivots, convierte los registros, en este caso de producto, en columnas independientes para cada producto.</p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1Po6e4WJvOgcQrV0BZqNPNHpuNSFQDuXz"
+                        alt="Pivot Pivot" />
+                </div>
+                <p>
+                    En Manual Aggregation se escoge la columna de cantidad para que, al final, cree una tabla que indique 
+                    cuántos productos de un tipo específico hay en cada sede.
+                </p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1JNT5EfTx1qynxUeOQ4P8fNMKahhYjVL7"
+                        alt="Agregation Pivot" />
+                </div>
+                <h3>14. Duplicate Row Filter</h3>
+                <p>
+                    Este nodo elimina filas duplicadas según columnas seleccionadas. Sirve para limpiar datos repetidos y mejorar la calidad 
+                    del dataset, configurando las columnas clave para detectar duplicados.
+                </p>
+                <p>Elegimos las columnas que queramos para que, en conjunto, no tengan registros duplicados.</p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1jUtJrHknY5w0xNNbVbYW5iRNRgiZNn6L"
+                        alt="Duplicate Row Filter" />
+                </div>
+                <h3>15. Decision Tree Learner</h3>
+                <p>
+                    Crea un modelo de árbol de decisión para clasificación o predicción. Sirve para análisis de machine learning básico y se 
+                    configura definiendo la variable objetivo y las variables predictoras.
+                </p>
+                <p>
+                    Este nodo, a partir de la variable objetivo que es categoria, comienza a generar reglas 
+                    utilizando las demás columnas, lo que permite mostrar diferentes perspectivas de los mismos datos.
+                </p>
+                <div class="img-container">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1iv0JkqCyLwAqyHLl74u_fVeXgdi6XTo3"
+                        alt="Decision Tree Learner" />
+                </div>
+                <div class="bottom-nav">
+                    <a href="#workflow" class="btn-nav" onclick="cambiarSeccion('workflow', null)">&larr; Anterior: Workflow</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function cambiarSeccion(idSeccion, btnElement) {
+            // Ocultar todas las secciones
+            const secciones = document.querySelectorAll('.seccion');
+            secciones.forEach(sec => {
+                sec.classList.remove('activa');
+            });
+
+            // Mostrar la sección seleccionada
+            const seccionAMostrar = document.getElementById(idSeccion);
+            if (seccionAMostrar) {
+                seccionAMostrar.classList.add('activa');
+            }
+
+            // Actualizar estilo de los botones
+            const botones = document.querySelectorAll('.btn-tab');
+            botones.forEach(btn => {
+                btn.classList.remove('active-tab');
+            });
+
+            // Añadir clase active-tab al botón clickeado
+            if (btnElement) {
+                btnElement.classList.add('active-tab');
+            } else {
+                // Si no se pasa el botón (load inicial), activar el correspondiente
+                const btnQuery = document.querySelector(`.btn-tab[onclick*="${idSeccion}"]`);
+                if (btnQuery) btnQuery.classList.add('active-tab');
+            }
+        }
+    </script>
+</body>
+
+</html>
