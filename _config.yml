@@ -3,6 +3,7 @@ description: "Notas, proyectos y cosas que voy aprendiendo."
 author: 
   name: "Johan Rivera"
 
+favicon: "/assets/img/orca.png"
 url: "https://j-rist.github.io/"
 baseurl: "/blog"
 
