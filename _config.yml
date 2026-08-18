@@ -1,4 +1,25 @@
-theme: jekyll-theme-minimal
-title: Rist's Homepage
-description: Bookmark this to keep an eye on my project updates!
-logo: "/assets/img/Java-Logo-Small.png"
+title: "Rist's Homepage"
+description: "Notas, proyectos y cosas que voy aprendiendo."
+author: 
+  name: "Johan Rivera"
+
+url: "https://j-rist.github.io/"
+baseurl: "/blog"
+
+permalink: /:title/
+
+lang: "es"
+timezone: "America/Bogota"
+
+markdown: kramdown
+
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
